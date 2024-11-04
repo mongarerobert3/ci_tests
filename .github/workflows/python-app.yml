@@ -18,6 +18,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
     - name: Run PyTest
-      working-directory: ./ci_tests  
       run: |
-        pytest 
+        pytest ./ci_tests
