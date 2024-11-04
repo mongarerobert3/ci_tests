@@ -1,0 +1,11 @@
+image: python:latest
+
+stages:
+  - test
+
+pytest:
+  stage: test
+  script:
+    - pip install pytest
+    - pip install -r requirements.txt
+    - pytest ./ci_testing/ci_tests/test.py
