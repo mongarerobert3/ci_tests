@@ -1,4 +1,4 @@
-# testing.
+# tests.
 
 def add(a, b):
     return a + b
