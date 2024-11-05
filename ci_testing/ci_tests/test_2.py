@@ -1,1 +1,1 @@
-# Staged but not pushed to main.
+# Staged but not pushed.

@@ -1,42 +1,35 @@
 import subprocess
 
-def check_unfinished_changes(repo_path):
-    try:
-        # Change to the repository directory
-        subprocess.run(["git", "-C", repo_path, "status"], check=True)
+def git_status():
+    # Get the status of the repository
+    status_result = subprocess.run(['git', 'status', '--porcelain'], stdout=subprocess.PIPE, text=True)
+    status_output = status_result.stdout.strip()
 
-        # Check for unstaged changes
-        unstaged = subprocess.run(
-            ["git", "-C", repo_path, "diff", "--name-only"],
-            stdout=subprocess.PIPE,
-            text=True
-        )
-        if unstaged.stdout:
-            print("There are unstaged changes:")
-            print(unstaged.stdout)
+    if status_output:
+        print("There are unstaged changes:")
+        print(status_output)
+    else:
+        print("No unstaged changes found.")
 
-        # Check for uncommitted changes in the staging area
-        uncommitted = subprocess.run(
-            ["git", "-C", repo_path, "diff", "--cached", "--name-only"],
-            stdout=subprocess.PIPE,
-            text=True
-        )
-        if uncommitted.stdout:
-            print("There are uncommitted changes:")
-            print(uncommitted.stdout)
+    # Check for uncommitted changes (changes staged for commit)
+    commit_result = subprocess.run(['git', 'diff', '--cached', '--name-only'], stdout=subprocess.PIPE, text=True)
+    commit_output = commit_result.stdout.strip()
 
-        # Check for unmerged branches
-        unmerged = subprocess.run(
-            ["git", "-C", repo_path, "branch", "--no-merged"],
-            stdout=subprocess.PIPE,
-            text=True
-        )
-        if unmerged.stdout:
-            print("There are branches with unmerged commits:")
-            print(unmerged.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred while checking the repository: {e}")
+    if commit_output:
+        print("There are uncommitted changes:")
+        print(commit_output)
+    else:
+        print("No uncommitted changes found.")
 
-# Example usage:
-# Replace 'path_to_repo' with the actual path to your Git repository
-check_unfinished_changes('.')
+    # Check for unmerged branches
+    branches_result = subprocess.run(['git', 'branch', '-r', '--no-merged'], stdout=subprocess.PIPE, text=True)
+    branches_output = branches_result.stdout.strip()
+
+    if branches_output:
+        print("There are branches with unmerged commits:")
+        print(branches_output)
+    else:
+        print("No branches with unmerged commits found.")
+
+if __name__ == "__main__":
+    git_status()
