@@ -1,11 +1,14 @@
-FROM jenkins/jenkins:lts
+# Use an official Python image as the base
+FROM python:3.9-slim
 
-USER root
+# Set the working directory in the container
+WORKDIR /app
 
-# Install Python and pip
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copy the test file into the container
+COPY ./ci_testing/ci_tests/test.py .
 
-USER jenkins
+# Install pytest
+RUN pip install --no-cache-dir pytest
+
+# Command to run tests
+CMD ["pytest", "test.py"]

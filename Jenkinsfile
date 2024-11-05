@@ -9,9 +9,10 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'python -m unittest discover'
+                sh 'pytest /var/jenkins_home/workspace/ci_testing/test.py'
             }
         }
+
     }
     post {
         always {
