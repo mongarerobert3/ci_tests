@@ -8,13 +8,8 @@ pipeline {
             }
         }
 
-
     }
-    post {
-        always {
-            junit '**/TEST-*.xml' // This step collects test reports
-        }
-    }
+    
 }
 
 
