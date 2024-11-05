@@ -1,31 +1,31 @@
 import subprocess
 
-def check_unfinished_changes():
-    # Check for unstaged changes
-    unstaged_changes = subprocess.run(['git', 'diff', '--name-only'], stdout=subprocess.PIPE).stdout.decode().strip()
-    
-    # Check for uncommitted changes in the staging area
-    uncommitted_changes = subprocess.run(['git', 'diff', '--staged', '--name-only'], stdout=subprocess.PIPE).stdout.decode().strip()
-    
-    # Check for branches with unmerged commits
-    branches_with_unmerged_commits = subprocess.run(['git', 'branch', '-r', '--no-merged'], stdout=subprocess.PIPE).stdout.decode().strip()
-    
-    if unstaged_changes:
-        print("There are unstaged changes:")
-        print(unstaged_changes)
-    else:
-        print("No unstaged changes.")
-        
-    if uncommitted_changes:
-        print("There are uncommitted changes:")
-        print(uncommitted_changes)
-    else:
-        print("No uncommitted changes.")
-        
-    if branches_with_unmerged_commits:
-        print("There are branches with unmerged commits:")
-        print(branches_with_unmerged_commits)
-    else:
-        print("No branches with unmerged commits.")
+def run_git_command(command):
+    try:
+        result = subprocess.run(['git'] + command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        return result.stdout.decode('utf-8').strip()
+    except subprocess.CalledProcessError as e:
+        print(f"Error running git command {' '.join(command)}: {e.stderr.decode('utf-8').strip()}")
+        return None
 
-check_unfinished_changes()
+# Check for unstaged changes
+unstaged_changes = run_git_command(['status', '--porcelain'])
+if unstaged_changes:
+    print("Unstaged changes found:\n", unstaged_changes)
+
+# Check for uncommitted changes in the staging area
+uncommitted_changes = run_git_command(['diff', '--name-only', '--cached'])
+if uncommitted_changes:
+    print("Uncommitted changes found:\n", uncommitted_changes)
+
+# Check for branches with unmerged commits
+local_branches = run_git_command(['branch', '--no-merged']).split('\n')
+if local_branches:
+    print("Branches with unmerged commits:")
+    for branch in local_branches:
+        branch = branch.strip()
+        if branch:
+            print(branch)
+
+if not unstaged_changes and not uncommitted_changes and not local_branches:
+    print("No unfinished changes found in the repository.")
