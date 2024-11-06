@@ -4,33 +4,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Retrieves the most recent code from the repository
                 checkout scm
             }
         }
-        
-        stage('Setup Environment') {
+        stage('Install Dependencies') {
             steps {
-                // Install necessary dependencies
-                sh 'pip install -r requirements.txt'
+                script {
+                    sh 'pip install -r requirements.txt' // Adjust for your project
+                }
             }
         }
-
         stage('Run Tests') {
             steps {
-                // Execute Python tests
-                sh 'pytest'
+                script {
+                    sh 'pytest tests'  // Adjust for your project test directory
+                }
             }
         }
     }
-    
+
     post {
-        always {
-            // Post-actions like cleaning up, sending notifications, etc.
+        success {
+            // Actions to perform if the pipeline is successful
+            echo 'The pipeline succeeded!'
         }
         failure {
             // Actions to perform if the pipeline fails
-            // e.g., send an email to the development team
+            echo 'The pipeline failed!'
         }
     }
 }
