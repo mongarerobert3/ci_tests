@@ -4,7 +4,13 @@ pipeline {
         // Trigger on push to specific branches or file patterns
         pollSCM('H/5 * * * *', filter: 'H/5 * * * *', ignorePostCommitHooks: false)
     }
-    stage('Run Tests') {
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Run Tests') {
             steps {
                 script {
                     try {
@@ -24,13 +30,14 @@ pipeline {
                 }
             }
         }
+    }
     post {
         success {
             emailext(
                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                 body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' was successful.</p>
                          <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
-                to: 'success-email@example.com'
+                to: 'mongarerobert3@gmail.com'
             )
         }
         failure {
