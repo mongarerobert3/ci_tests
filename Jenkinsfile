@@ -10,7 +10,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 // Running tests in the ci_tests folder, ensuring test discovery for the 'test.py' file
-                sh 'python -m unittest discover -s ci_tests -p "test.py"'
+                sh 'python -m unittest discover -s ./ci_testing/ci_tests -p "test.py"'
             }
         }
     }
