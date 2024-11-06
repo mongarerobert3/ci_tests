@@ -17,3 +17,7 @@ def test_subtract():
 
 def test_multiply():
     assert multiply(4, 3) == 12
+
+if __name__ == "__main__":
+    import unittest
+    unittest.main()
