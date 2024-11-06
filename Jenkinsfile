@@ -9,13 +9,16 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'python -m unittest discover ci_tests'
+                // Running tests in the ci_tests folder, ensuring test discovery for the 'test.py' file
+                sh 'python -m unittest discover -s ci_tests -p "test.py"'
             }
         }
     }
+
     post {
         always {
-            junit '**/TEST-*.xml' // This step collects test reports
+            // Collecting the test results, ensure your test framework generates the XML reports
+            junit '**/TEST-*.xml'  // Adjust the pattern if your test reports are generated with different names
         }
     }
 }
