@@ -40,17 +40,8 @@ pipeline {
 
     post {
         failure {
-            emailext(
-                subject: "FAILED: ${currentBuild.fullDisplayName}",
-                body: """<p>Something went wrong with the build:</p>
-                 <p>Job: ${env.JOB_NAME}<br>
-                 Build Number: ${env.BUILD_NUMBER}<br>
-                 Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mongarerobert3@gmail.com'
-            )
+            slackSend(channel: 'testing', color: 'danger', message: "Failed Pipeline: ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
         }
     }
 }
-
 
