@@ -7,17 +7,24 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'pip install -r requirements.txt' // Adjust for your project
+                    // Ensure Python and pip are installed
+                    sh 'sudo apt-get update'
+                    sh 'sudo apt-get install -y python3 python3-pip'  // Install Python3 and pip
+
+                    // Install dependencies from requirements.txt
+                    sh 'pip3 install -r requirements.txt'  // Ensure pip3 is used for Python3
                 }
             }
         }
+
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'pytest tests'  // Adjust for your project test directory
+                    sh 'pytest tests'  // Run tests
                 }
             }
         }
@@ -25,11 +32,9 @@ pipeline {
 
     post {
         success {
-            // Actions to perform if the pipeline is successful
             echo 'The pipeline succeeded!'
         }
         failure {
-            // Actions to perform if the pipeline fails
             echo 'The pipeline failed!'
         }
     }
