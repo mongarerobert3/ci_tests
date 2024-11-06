@@ -41,8 +41,9 @@ pipeline {
     post {
         failure {
             script {
-                echo 'Sending failure email...'
+                echo 'Build failed, preparing to send failure email...'
                 try {
+                    echo 'Attempting to send email...'
                     emailext(
                         subject: "FAILED: ${currentBuild.fullDisplayName}",
                         body: """<p>Something went wrong with the build:</p>
@@ -54,7 +55,8 @@ pipeline {
                     )
                     echo 'Email sent successfully'
                 } catch (Exception e) {
-                    echo "Email failed to send: ${e.getMessage()}"
+                    echo "Email sending failed: ${e.getMessage()}"
+                    currentBuild.result = 'FAILURE'
                 }
             }
         }
