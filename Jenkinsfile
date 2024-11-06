@@ -14,7 +14,7 @@ pipeline {
                     dir('ci_testing/ci_tests') {
                         // Run unittest with XML output
                         sh '''
-                            python -m unittest discover -s ci_testing/ci_tests -p "test*.py"
+                            python -m unittest discover -s ci_tests -p "test*.py"
                         '''
                     }
                 }
