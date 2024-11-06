@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'python -m unittest ci_tests'
+                sh 'python -m unittest -s ci_tests'
             }
         }
     }
