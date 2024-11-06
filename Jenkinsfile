@@ -28,7 +28,7 @@ pipeline {
             emailext(
                 subject: "Jenkins Build Success: ${currentBuild.fullDisplayName}",
                 body: "The Jenkins build ${currentBuild.fullDisplayName} has successfully completed.",
-                to: 'mongarerobert3@gmail.com' // Add your email address
+                to: 'mongarerobert3@gmail.com', // Add your email address
                 from: 'Turing-Test@gmail.com'
             )
         }
@@ -36,7 +36,7 @@ pipeline {
             emailext(
                 subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
                 body: "The Jenkins build ${currentBuild.fullDisplayName} has failed.",
-                to: 'mongarerobert3@gmail.com' // Add your email address
+                to: 'mongarerobert3@gmail.com', // Add your email address
                 from: 'Turing-Test@gmail.com'
             )
         }
