@@ -16,7 +16,7 @@ pipeline {
                     sh 'sudo apt-get install -y python3 python3-pip'  // Install Python3 and pip
 
                     // Install dependencies from requirements.txt
-                    sh 'pip3 install -r requirements.txt'  // Ensure pip3 is used for Python3
+                    sh 'pip3 install -r ./ci_testing/requirements.txt'  // Ensure pip3 is used for Python3
                 }
             }
         }
