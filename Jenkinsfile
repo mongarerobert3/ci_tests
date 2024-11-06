@@ -1,22 +1,10 @@
 pipeline {
     agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    try {
-                        checkout scm
-                        echo 'Checkout successful'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        echo "Checkout failed: ${e.getMessage()}"
-                        throw e
-                    }
-                }
-            }
-        }
-        stage('Run Tests') {
+    triggers {
+        // Trigger on push to specific branches or file patterns
+        pollSCM('H/5 * * * *', filter: 'H/5 * * * *', ignorePostCommitHooks: false)
+    }
+    stage('Run Tests') {
             steps {
                 script {
                     try {
@@ -36,14 +24,38 @@ pipeline {
                 }
             }
         }
-    }
-
     post {
+        success {
+            emailext(
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' was successful.</p>
+                         <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
+                to: 'success-email@example.com'
+            )
+        }
         failure {
-            mail to: 'mongarerobert3@gmail.com',
-                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-                 body: "Something is wrong with ${env.BUILD_URL}"
+            emailext(
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' failed.</p>
+                         <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
+                to: 'failure-email@example.com'
+            )
+        }
+        unstable {
+            emailext(
+                subject: "UNSTABLE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' is unstable.</p>
+                         <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
+                to: 'unstable-email@example.com'
+            )
+        }
+        aborted {
+            emailext(
+                subject: "ABORTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' was aborted.</p>
+                         <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
+                to: 'aborted-email@example.com'
+            )
         }
     }
 }
-
