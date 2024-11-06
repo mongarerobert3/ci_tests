@@ -14,8 +14,7 @@ pipeline {
                     dir('ci_testing/ci_tests') {
                         // Run unittest with XML output
                         sh '''
-                            python -m unittest discover -s . -p "test*.py" > result.log || true
-                            python -m unittest discover -s . -p "test*.py" | tee result.xml
+                            python -m unittest discover -s ci_testing/ci_tests -p "test*.py"
                         '''
                     }
                 }
