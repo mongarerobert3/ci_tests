@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
                 checkout scm
             }
@@ -10,26 +10,26 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Ensure Python runs from the correct directory
-                    dir('ci_testing/ci_tests') {
-                        // Ensure we're in the correct directory, and run unittest
-                        sh '''
-                            # Ensure that we can discover and run the tests
-                            python -m unittest discover -s . -p "test*.py"
-                        '''
-                    }
+                    // Run your tests
+                    sh 'python -m unittest discover -s . -p test*.py'
                 }
             }
         }
     }
+
     post {
+        success {
+            emailext(
+                subject: "Jenkins Build Success: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins build ${currentBuild.fullDisplayName} has successfully completed.",
+                to: 'mongarerobert3@gmail.com' // Add your email address
+            )
+        }
         failure {
             emailext(
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' failed.</p>
-                         <p>Check console output at '<a href="${env.BUILD_URL}">${env.BUILD_URL}</a>'</p>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mongarerobert3@gmail.com'
+                subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
+                body: "The Jenkins build ${currentBuild.fullDisplayName} has failed.",
+                to: 'mongarerobert3@gmail.com' // Add your email address
             )
         }
     }
