@@ -12,9 +12,10 @@ pipeline {
                 script {
                     // Ensure Python runs from the correct directory
                     dir('ci_testing/ci_tests') {
-                        // Run unittest with XML output
+                        // Ensure we're in the correct directory, and run unittest
                         sh '''
-                            python -m unittest discover -s ci_tests -p "test*.py"
+                            # Ensure that we can discover and run the tests
+                            python -m unittest discover -s . -p "test*.py"
                         '''
                     }
                 }
