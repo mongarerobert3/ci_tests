@@ -10,11 +10,17 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run your tests
-                    sh 'python -m unittest discover -s . -p test*.py'
+                    // Ensure we're in the correct directory (ci_testing/ci_tests)
+                    dir('ci_testing/ci_tests') {
+                        // Run unittest with XML output
+                        sh '''
+                            python -m unittest discover -s . -p "test*.py" > result.xml
+                        '''
+                    }
                 }
             }
         }
+    }
     }
 
     post {
