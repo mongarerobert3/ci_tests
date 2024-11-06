@@ -39,13 +39,14 @@ pipeline {
     }
 
     post {
-        failure {
+        always {
             script {
-                echo 'Build failed, preparing to send failure email...'
+                echo 'Post-build actions are being executed...'
+                // Even if the build is successful, try sending email.
                 try {
                     echo 'Attempting to send email...'
                     emailext(
-                        subject: "FAILED: ${currentBuild.fullDisplayName}",
+                        subject: "Build ${currentBuild.result}: ${currentBuild.fullDisplayName}",
                         body: """<p>Something went wrong with the build:</p>
                         <p>Job: ${env.JOB_NAME}<br>
                         Build Number: ${env.BUILD_NUMBER}<br>
