@@ -23,9 +23,5 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            junit '**/result.xml'  // Collect the XML test report
-        }
-    }
+    
 }
