@@ -24,7 +24,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'pytest tests'  // Run tests
+                    sh 'pytest ./ci_testing/tests/test.py'  // Run tests
                 }
             }
         }
