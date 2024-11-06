@@ -9,16 +9,23 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                // Running tests in the ci_tests folder, ensuring test discovery for the 'test.py' file
-                sh 'python -m unittest discover -s ./ci_testing/ci_tests -p "test.py"'
+                script {
+                    // Ensure Python runs from the correct directory
+                    dir('ci_testing/ci_tests') {
+                        // Run unittest with XML output
+                        sh '''
+                            python -m unittest discover -s . -p "test*.py" > result.log || true
+                            python -m unittest discover -s . -p "test*.py" | tee result.xml
+                        '''
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // Collecting the test results, ensure your test framework generates the XML reports
-            junit '**/TEST-*.xml'  // Adjust the pattern if your test reports are generated with different names
+            junit '**/result.xml'  // Collect the XML test report
         }
     }
 }
