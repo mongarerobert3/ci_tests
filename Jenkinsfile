@@ -39,27 +39,28 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                echo 'Post-build actions are being executed...'
-                // Even if the build is successful, try sending email.
-                try {
-                    echo 'Attempting to send email...'
-                    emailext(
-                        subject: "Build ${currentBuild.result}: ${currentBuild.fullDisplayName}",
-                        body: """<p>Something went wrong with the build:</p>
-                        <p>Job: ${env.JOB_NAME}<br>
-                        Build Number: ${env.BUILD_NUMBER}<br>
-                        Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
-                        to: 'mongarerobert3@gmail.com',  // Replace with valid recipient
-                        from: 'Turing@gmail.com'  // Replace with a valid sender email
-                    )
-                    echo 'Email sent successfully'
-                } catch (Exception e) {
-                    echo "Email sending failed: ${e.getMessage()}"
-                    currentBuild.result = 'FAILURE'
-                }
+    failure {
+        script {
+            echo 'Post-build actions are being executed... Build failed.'
+            
+            try {
+                echo 'Attempting to send failure-specific email...'
+                emailext(
+                    subject: "FAILED: ${currentBuild.fullDisplayName}",
+                    body: """<p>Something went wrong with the build:</p>
+                    <p>Job: ${env.JOB_NAME}<br>
+                    Build Number: ${env.BUILD_NUMBER}<br>
+                    Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
+                    to: 'mongarerobert3@gmail.com',  // Replace with valid recipient
+                    from: 'Turing@gmail.com'  // Replace with valid sender email
+                )
+                echo 'Failure email sent successfully'
+            } catch (Exception e) {
+                echo "Failure email sending failed: ${e.getMessage()}"
+                currentBuild.result = 'FAILURE'  // Set the result to FAILURE in case of an exception during email sending
             }
         }
     }
+}
+
 }
