@@ -40,7 +40,9 @@ pipeline {
 
     post {
         failure {
-            slackSend(channel: 'testing', color: 'danger', message: "Failed Pipeline: ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
+            mail to: 'youremail@example.com',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}"
         }
     }
 }
