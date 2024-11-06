@@ -31,7 +31,7 @@ pipeline {
                  Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
                 to: 'mongarerobert3@gmail.com',
-                from: 'Turing@gmail.com'
+                from: 'courtewampedsoftwares@gmail.com'
             )
         }
     }
