@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
@@ -21,25 +21,17 @@ pipeline {
             }
         }
     }
-    
-
     post {
-        success {
-            emailext(
-                subject: "Jenkins Build Success: ${currentBuild.fullDisplayName}",
-                body: "The Jenkins build ${currentBuild.fullDisplayName} has successfully completed.",
-                to: 'mongarerobert3@gmail.com', // Add your email address
-                from: 'Turing-Test@gmail.com'
-            )
-        }
         failure {
             emailext(
-                subject: "Jenkins Build Failed: ${currentBuild.fullDisplayName}",
-                body: "The Jenkins build ${currentBuild.fullDisplayName} has failed.",
-                to: 'mongarerobert3@gmail.com', // Add your email address
-                from: 'Turing-Test@gmail.com'
+                subject: "FAILED: ${currentBuild.fullDisplayName}",
+                body: """<p>Something went wrong with the build:</p>
+                 <p>Job: ${env.JOB_NAME}<br>
+                 Build Number: ${env.BUILD_NUMBER}<br>
+                 Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: 'mongarerobert3@gmail.com'
             )
         }
     }
-
 }
