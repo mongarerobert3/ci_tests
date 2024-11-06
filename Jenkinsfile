@@ -30,7 +30,8 @@ pipeline {
                  Build Number: ${env.BUILD_NUMBER}<br>
                  Console Output: <a href="${env.BUILD_URL}console">Console Output</a></p>""",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mongarerobert3@gmail.com'
+                to: 'mongarerobert3@gmail.com',
+                from: 'Turing@gmail.com'
             )
         }
     }
