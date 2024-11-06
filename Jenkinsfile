@@ -1,41 +1,49 @@
-pipeline {
-    agent any
+// Jenkinsfile
 
+pipeline {
+    agent any // This pipeline can run on any available agent
+    
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Get the latest code from the repository
+                git 'https://github.com/mongarerobert3/ci_tests'
             }
         }
-
-        stage('Install Dependencies') {
+        
+        stage('Setup Python Environment') {
             steps {
+                // Use a virtualenv or a similar tool to setup your Python environment
                 script {
-                    // Ensure Python and pip are installed
-                    sh 'sudo apt-get update'
-                    sh 'sudo apt-get install -y python3 python3-pip'  // Install Python3 and pip
-
-                    // Install dependencies from requirements.txt
-                    sh 'pip3 install -r ./ci_testing/requirements.txt'  // Ensure pip3 is used for Python3
+                    sh 'python -m venv venv'
+                    sh '. venv/bin/activate'
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
-
+        
         stage('Run Tests') {
             steps {
+                // Execute the unit tests, the pipeline will fail if any test fails
                 script {
-                    sh 'pytest ./ci_testing/tests/test.py'  // Run tests
+                    sh 'pytest ./ci_testing/tests/test.py'
                 }
             }
         }
     }
-
+    
     post {
+        always {
+            // Clean up after the pipeline runs
+            cleanWs()
+        }
         success {
-            echo 'The pipeline succeeded!'
+            // Actions to perform on success
+            echo 'Tests passed successfully!'
         }
         failure {
-            echo 'The pipeline failed!'
+            // Actions to perform if the pipeline fails
+            echo 'Tests failed. Check the logs for details.'
         }
     }
 }
