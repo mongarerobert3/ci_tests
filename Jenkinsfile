@@ -1,19 +1,17 @@
-// Jenkinsfile
-
 pipeline {
-    agent any // This pipeline can run on any available agent
-    
+    agent any
+
     stages {
         stage('Checkout') {
             steps {
-                // Get the latest code from the repository
-                git 'https://github.com/mongarerobert3/ci_tests'
+                // Get the latest code from the source control
+                checkout scm
             }
         }
-        
-        stage('Setup Python Environment') {
+
+        stage('Setup environment') {
             steps {
-                // Use a virtualenv or a similar tool to setup your Python environment
+                // Setup a virtual environment and install dependencies
                 script {
                     sh 'python -m venv venv'
                     sh '. venv/bin/activate'
@@ -21,29 +19,27 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Run Tests') {
             steps {
-                // Execute the unit tests, the pipeline will fail if any test fails
+                // Run the unit tests with the unittest module or pytest
                 script {
-                    sh 'pytest ./ci_testing/tests/test.py'
+                    try {
+                        sh 'pytest ./ci_testing/tests/test.py'
+                    } catch (Exception e) {
+                        // If tests fail, mark the build as failed
+                        currentBuild.result = 'FAILURE'
+                        throw e // Re-throw the exception to stop the pipeline
+                    }
                 }
             }
         }
     }
-    
+
     post {
         always {
-            // Clean up after the pipeline runs
+            // Clean up the workspace to be used for the next run
             cleanWs()
-        }
-        success {
-            // Actions to perform on success
-            echo 'Tests passed successfully!'
-        }
-        failure {
-            // Actions to perform if the pipeline fails
-            echo 'Tests failed. Check the logs for details.'
         }
     }
 }
