@@ -37,7 +37,7 @@ pipeline {
                 subject: "FAILED: Unit tests in Jenkins build ${env.BUILD_NUMBER}",
                 body: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}. Please check the build logs at: ${env.BUILD_URL}",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'team@example.com'
+                to: 'mongarerobert3@gmail.com'
             )
         }
     }
