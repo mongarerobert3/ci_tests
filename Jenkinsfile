@@ -12,8 +12,6 @@ pipeline {
             steps {
                 // Setup a virtual environment and install dependencies
                 script {
-                    sh 'python -m venv venv'
-                    sh '. venv/bin/activate'
                     sh 'pip install -r ./ci_testing/requirements.txt'
                 }
             }
