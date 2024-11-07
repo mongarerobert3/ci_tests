@@ -22,28 +22,20 @@ pipeline {
             }
         }
 
-        // Stage to run unit tests with coverage
+        // Stage to run unit tests
         stage('Test with Coverage') {
             steps {
-                // Run pytest with coverage
-                sh 'coverage run -m pytest ./ci_testing/tests/test.py'
-                
-                // Generate the HTML coverage report in the 'coverage_html' directory
-                sh 'coverage html -d coverage_html'
-                sh 'ls -R coverage_html'
+                sh 'coverage run -m pytest ./ci_testing/tests/test.py' // Running tests with coverage
+                sh 'coverage html -d coverage_html' // Generating HTML coverage report
             }
         }
+
     }
 
     post {
         always {
-            // Archive the HTML coverage report
+            // Archive the generated HTML coverage report
             archiveArtifacts artifacts: 'coverage_html/**/*', fingerprint: true
-            // Display a link to the coverage report in the build summary
-            
-            script {
-                currentBuild.description = "<a href='coverage_html/index.html'>View Coverage Report</a>"
-            }
         }
     }
 }
