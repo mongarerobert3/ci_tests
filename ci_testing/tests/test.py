@@ -9,7 +9,7 @@ def test_addition():
 # Sample test for subtraction
 def test_subtraction():
     result = 5 - 3
-    assert result == 2
+    assert result == 1
 
 # Sample test for multiplication
 def test_multiplication():
