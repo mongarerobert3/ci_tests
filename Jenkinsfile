@@ -30,6 +30,7 @@ pipeline {
                 
                 // Generate the HTML coverage report in the 'coverage_html' directory
                 sh 'coverage html -d coverage_html'
+                sh 'ls -R coverage_html'
             }
         }
     }
