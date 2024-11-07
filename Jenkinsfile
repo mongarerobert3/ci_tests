@@ -1,44 +1,59 @@
 pipeline {
     agent any
-    environment {
-        // Define the Slack credential ID
-        SLACK_CREDENTIAL_ID = 'robert-mnj5732'
-        // Define the Slack channel where notifications will be sent
-        SLACK_CHANNEL = 'testing'
-    }
+    
+    // Define the stages of the pipeline
     stages {
+        // Stage for checking out the latest code from the source control
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the source control management (SCM) configured in Jenkins
+                checkout scm
+            }
+        }
+
+        // Stage to set up the environment and install necessary dependencies
         stage('Setup environment') {
             steps {
-                // Setup a virtual environment and install dependencies
+                // Use a script block to install the dependencies from requirements.txt
                 script {
-                    sh 'pip install -r ./ci_testing/requirements.txt'
+                    // Install Python dependencies listed in the requirements.txt file
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
+
+        // Stage to run unit tests
         stage('Run Tests') {
             steps {
                 script {
                     try {
-                        // Run tests, if they fail, this will throw an exception
-                        sh 'pytest ./ci_testing/tests/test.py'
+                        // Run the tests using pytest, the path to tests should be specified here
+                        sh 'pytest <path_to_tests>' // Replace <path_to_tests> with your test file path
                     } catch (Exception e) {
-                        // Explicitly mark the build as failed
+                        // Explicitly mark the build as failed if tests fail
                         currentBuild.result = 'FAILURE'
-                        throw e // Rethrow the exception to stop the pipeline
+                        
+                        // Rethrow the exception to stop the pipeline execution
+                        throw e
                     }
                 }
             }
         }
+
+        stage('Test with Coverage') {
+            steps {
+                sh 'coverage run -m pytest ./ci_testing/tests/test.py'
+                sh 'coverage html -d coverage_html'
+            }
+        }
+
     }
+
     post {
-        failure {
-            // This will run only if the pipeline fails
-            emailext (
-                subject: "FAILED: Unit tests in Jenkins build ${env.BUILD_NUMBER}",
-                body: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}. Please check the build logs at: ${env.BUILD_URL}",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mongarerobert3@gmail.com'
-            )
+        always {
+            archiveArtifacts artifacts: 'coverage_html/**/*', fingerprint: true
+            // Optional: If you are using a plugin like Cobertura, you can publish the coverage report
+            // cobertura coberturaReportFile: 'coverage.xml'
         }
     }
 }
