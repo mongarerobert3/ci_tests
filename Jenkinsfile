@@ -35,12 +35,9 @@ pipeline {
     post {
         failure {
             // This will run only if the pipeline fails
-            emailext (
-                subject: "FAILED: Unit tests in Jenkins build ${env.BUILD_NUMBER}",
-                body: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}. Please check the build logs at: ${env.BUILD_URL}",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mongarerobert3@gmail.com'
-            )
+            mail to: 'mongarerobert3@gmail.com',
+            subject: "Failed Pipeline: ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+            body: "Something is wrong with the build ${env.BUILD_URL}"
         }
     }
 }
