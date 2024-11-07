@@ -1,13 +1,12 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
-            steps {
-                // Get the latest code from the source control
-                checkout scm
-            }
-        }
+                    steps {
+                        // Get the latest code from the source control
+                        checkout scm
+                    }
+                }
 
         stage('Setup environment') {
             steps {
@@ -15,12 +14,12 @@ pipeline {
                 script {
                     sh 'python -m venv venv'
                     sh '. venv/bin/activate'
-                    sh 'pip install -r requirements.txt'
+                    sh 'pip install -r ./ci_testing/requirements.txt'
                 }
             }
         }
 
-        stage('Run Tests') {
+         stage('Run Tests') {
             steps {
                 // Run the unit tests with the unittest module or pytest
                 script {
@@ -35,11 +34,13 @@ pipeline {
             }
         }
     }
-
     post {
-        always {
-            // Clean up the workspace to be used for the next run
-            cleanWs()
+        failure {
+            // Sends a notification to the specified Slack channel if a test fails
+            slackSend(channel: '#your-slack-channel', color: 'danger', message: "TESTS FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+
+            // Send detailed log output to Slack (optional)
+            slackSend(channel: '#your-slack-channel', color: 'warning', message: "${env.BUILD_URL}consoleText")
         }
     }
 }
