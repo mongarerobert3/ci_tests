@@ -1,10 +1,8 @@
 pipeline {
     agent any
-    
-    // Define the stages of the pipeline
+
     stages {
-        // Stage for checking out the latest code from the source control
-        stage('Checkout') {
+stage('Checkout') {
             steps {
                 // Checkout the code from the source control management (SCM) configured in Jenkins
                 checkout scm
@@ -22,20 +20,17 @@ pipeline {
             }
         }
 
-        // Stage to run unit tests
-        stage('Test with Coverage') {
+        stage('Run Tests with Coverage') {
             steps {
-                sh 'coverage run -m pytest ./ci_testing/tests/test.py' // Running tests with coverage
-                sh 'coverage html -d coverage_html' // Generating HTML coverage report
+                sh 'coverage run -m pytest ./ci_testing/tests/test.py'
+                sh 'coverage html -d coverage_html'
             }
         }
-
     }
-
     post {
         always {
-            // Archive the generated HTML coverage report
-            archiveArtifacts artifacts: 'coverage_html/**/*', fingerprint: true
+            archiveArtifacts artifacts: 'coverage_html/**/*'
+            cleanWs()
         }
     }
 }
