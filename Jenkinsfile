@@ -22,22 +22,22 @@ pipeline {
             }
         }
 
-        // Stage to run unit tests
-
+        // Stage to run unit tests with coverage
         stage('Test with Coverage') {
             steps {
+                // Run pytest with coverage
                 sh 'coverage run -m pytest ./ci_testing/tests/test.py'
+                
+                // Generate the HTML coverage report in the 'coverage_html' directory
                 sh 'coverage html -d coverage_html'
             }
         }
-
     }
 
     post {
         always {
+            // Archive the HTML coverage report
             archiveArtifacts artifacts: 'coverage_html/**/*', fingerprint: true
-            // Optional: If you are using a plugin like Cobertura, you can publish the coverage report
-            // cobertura coberturaReportFile: 'coverage.xml'
         }
     }
 }
