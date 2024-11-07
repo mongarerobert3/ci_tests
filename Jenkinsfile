@@ -17,7 +17,16 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'pytest ./ci_testing/tests/test.py || echo "Tests failed!" > test-failure.log'
+                script {
+                    try {
+                        // Run tests, if they fail, this will throw an exception
+                        sh 'pytest ./ci_testing/tests/test.py'
+                    } catch (Exception e) {
+                        // Explicitly mark the build as failed
+                        currentBuild.result = 'FAILURE'
+                        throw e // Rethrow the exception to stop the pipeline
+                    }
+                }
             }
         }
     }
