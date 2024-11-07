@@ -23,20 +23,8 @@ pipeline {
     }
     post {
         failure {
-            // Send a notification to Slack on test failure
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'danger',
-                message: "TEST FAILURE: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                tokenCredentialId: env.SLACK_CREDENTIAL_ID,
-                attachments: [
-                    [
-                        "fallback": "Test failure log",
-                        "text": "Test failure details available",
-                        "file": "test-failure.log"
-                    ]
-                ]
-            )
+            // This block will only run if the pipeline fails
+            slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'\nConsole output: ${env.BUILD_URL}console")
         }
     }
 }
