@@ -24,6 +24,8 @@ stage('Checkout') {
             steps {
                 sh 'coverage run -m pytest ./ci_testing/tests/test.py'
                 sh 'coverage html -d coverage_html'
+                sh 'ls -R coverage_html'
+
             }
         }
     }
