@@ -35,10 +35,11 @@ pipeline {
     post {
         failure {
             // This will run only if the pipeline fails
-            slackSend (
-                channel: 'testing',
-                color: 'danger',
-                message: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}: ${env.BUILD_URL}"
+            emailext (
+                subject: "FAILED: Unit tests in Jenkins build ${env.BUILD_NUMBER}",
+                body: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}. Please check the build logs at: ${env.BUILD_URL}",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                to: 'mongarerobert3@gmail.com'
             )
         }
     }
