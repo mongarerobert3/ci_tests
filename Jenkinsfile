@@ -20,7 +20,6 @@ pipeline {
                 sh 'pytest ./ci_testing/tests/test.py || echo "Tests failed!" > test-failure.log'
             }
         }
-
     }
     post {
         failure {
@@ -29,8 +28,14 @@ pipeline {
                 channel: env.SLACK_CHANNEL,
                 color: 'danger',
                 message: "TEST FAILURE: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                credentialId: env.SLACK_CREDENTIAL_ID,
-                file: 'test-failure.log'
+                tokenCredentialId: env.SLACK_CREDENTIAL_ID,
+                attachments: [
+                    [
+                        "fallback": "Test failure log",
+                        "text": "Test failure details available",
+                        "file": "test-failure.log"
+                    ]
+                ]
             )
         }
     }
