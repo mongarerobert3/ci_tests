@@ -39,6 +39,11 @@ pipeline {
         always {
             // Archive the HTML coverage report
             archiveArtifacts artifacts: 'coverage_html/**/*', fingerprint: true
+            // Display a link to the coverage report in the build summary
+            
+            script {
+                currentBuild.description = "<a href='coverage_html/index.html'>View Coverage Report</a>"
+            }
         }
     }
 }
