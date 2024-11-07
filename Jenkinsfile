@@ -40,9 +40,8 @@ pipeline {
             // Send detailed log output to Slack (optional)
             slackSend(channel: 'testing', color: 'warning', message: "${env.BUILD_URL}consoleText")
 
-            mail to: 'mongarerobert3@gmail.com',
-            subject: "Failed Pipeline: ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
-            body: "Something is wrong with the build ${env.BUILD_URL}"
+            message: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}: ${env.BUILD_URL}"
+
         }
     }
 }
