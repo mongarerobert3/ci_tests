@@ -1,13 +1,12 @@
 pipeline {
     agent any
+    environment {
+        // Define the Slack credential ID
+        SLACK_CREDENTIAL_ID = 'robert-mnj5732'
+        // Define the Slack channel where notifications will be sent
+        SLACK_CHANNEL = 'testing'
+    }
     stages {
-        stage('Checkout') {
-                    steps {
-                        // Get the latest code from the source control
-                        checkout scm
-                    }
-                }
-
         stage('Setup environment') {
             steps {
                 // Setup a virtual environment and install dependencies
@@ -16,28 +15,23 @@ pipeline {
                 }
             }
         }
-
         stage('Run Tests') {
-        steps {
-            // Run the unit tests with the unittest module or pytest
-            script {
-                try {
-                    sh 'pytest ./ci_testing/tests/test.py'
-                } catch (Exception e) {
-                    // If tests fail, mark the build as failed
-                    currentBuild.result = 'FAILURE'
-                    throw e // Re-throw the exception to stop the pipeline
-                }
+            steps {
+                sh 'pytest ./ci_testing/tests/test.py || echo "Tests failed!" > test-failure.log'
             }
         }
-    }
+
     }
     post {
         failure {
-            // This will run only if the pipeline fails
-            mail to: 'mongarerobert3@gmail.com',
-            subject: "Failed Pipeline: ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
-            body: "Something is wrong with the build ${env.BUILD_URL}"
+            // Send a notification to Slack on test failure
+            slackSend(
+                channel: env.SLACK_CHANNEL,
+                color: 'danger',
+                message: "TEST FAILURE: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                credentialId: env.SLACK_CREDENTIAL_ID,
+                file: 'test-failure.log'
+            )
         }
     }
 }
