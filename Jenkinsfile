@@ -34,14 +34,12 @@ pipeline {
     }
     post {
         failure {
-            // Sends a notification to the specified Slack channel if a test fails
-            slackSend(channel: 'testing', color: 'danger', message: "TESTS FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
-
-            // Send detailed log output to Slack (optional)
-            slackSend(channel: 'testing', color: 'warning', message: "${env.BUILD_URL}consoleText")
-
-            message: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}: ${env.BUILD_URL}"
-
+            // This will run only if the pipeline fails
+            slackSend (
+                channel: 'testing',
+                color: 'danger',
+                message: "Unit tests failed in Jenkins build ${env.BUILD_NUMBER}: ${env.BUILD_URL}"
+            )
         }
     }
 }
