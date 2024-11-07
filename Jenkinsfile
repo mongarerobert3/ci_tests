@@ -17,28 +17,12 @@ pipeline {
                 // Use a script block to install the dependencies from requirements.txt
                 script {
                     // Install Python dependencies listed in the requirements.txt file
-                    sh 'pip install -r requirements.txt'
+                    sh 'pip install -r ./ci_testing/requirements.txt'
                 }
             }
         }
 
         // Stage to run unit tests
-        stage('Run Tests') {
-            steps {
-                script {
-                    try {
-                        // Run the tests using pytest, the path to tests should be specified here
-                        sh 'pytest <path_to_tests>' // Replace <path_to_tests> with your test file path
-                    } catch (Exception e) {
-                        // Explicitly mark the build as failed if tests fail
-                        currentBuild.result = 'FAILURE'
-                        
-                        // Rethrow the exception to stop the pipeline execution
-                        throw e
-                    }
-                }
-            }
-        }
 
         stage('Test with Coverage') {
             steps {
