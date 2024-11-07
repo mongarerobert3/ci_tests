@@ -35,10 +35,10 @@ pipeline {
     post {
         failure {
             // Sends a notification to the specified Slack channel if a test fails
-            slackSend(channel: '#your-slack-channel', color: 'danger', message: "TESTS FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
+            slackSend(channel: 'testing', color: 'danger', message: "TESTS FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
 
             // Send detailed log output to Slack (optional)
-            slackSend(channel: '#your-slack-channel', color: 'warning', message: "${env.BUILD_URL}consoleText")
+            slackSend(channel: 'testing', color: 'warning', message: "${env.BUILD_URL}consoleText")
         }
     }
 }
