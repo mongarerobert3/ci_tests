@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-stage('Checkout') {
+    stage('Checkout') {
             steps {
                 // Checkout the code from the source control management (SCM) configured in Jenkins
                 checkout scm
@@ -19,20 +19,29 @@ stage('Checkout') {
                 }
             }
         }
-
         stage('Run Tests with Coverage') {
             steps {
-                sh 'coverage run -m pytest ./ci_testing/tests/test.py'
-                sh 'coverage html -d coverage_html'
-                sh 'ls -R coverage_html'
+                sh '''
+                # Create an environment variable for the coverage report directory
+                COVERAGE_DIR=coverage_report
 
+                # Run tests with coverage
+                coverage run -m pytest
+
+                # Generate HTML report
+                coverage html -d $COVERAGE_DIR
+
+                # Fail the build if code coverage is below a certain threshold, e.g., 80%
+                coverage report --fail-under=80
+                '''
             }
         }
     }
+
     post {
         always {
-            archiveArtifacts artifacts: 'coverage_html/**/*'
-            cleanWs()
+            // Archive the coverage report for Jenkins to display
+            archiveArtifacts artifacts: 'coverage_report/**/*'
         }
     }
 }
